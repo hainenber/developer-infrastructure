@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  jenkins-server:
+    build:
+      context: ./jenkins
+      dockerfile: jenkins.Dockerfile
+    restart: on-failure
+    environment:
+      DOCKER_HOST: "tcp://docker:2376"
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false" # Disable setup wizard  
+    ports:
+      - 8080:8080   # Port to expose Jenkins UI
+      - 50000:5000  # Port for commnunicating with Jenkins agent
+    volumes:
+      - jenkins-data:/var/jenkins_home
+    networks:
+      - common
+    
+networks:
+  common:
+
+volumes:
+  jenkins-data:
+  
