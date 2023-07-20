@@ -1,0 +1,22 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n"
+  agentProtocols:
+    - "JNLP4-connect"
+    - "Ping"
+  clouds:
+    - docker:
+        dockerApi:
+          connectTimeout: 60
+          dockerHost:
+            uri: "tcp://docker:2375"
+          readTimeout: 60 
+        name: "docker"
+        exposeDockerHost: true
+        templates:
+          - connector: "attach"
+            dockerTemplateBase:
+              image: "docker-registry:5000/jenkins-agent-for-golang"
+            labelString: "docker"
+            name: "jenkins-agent-for-golang"
+            pullStrategy: PULL_ALWAYS
+            pullTimeout: 300

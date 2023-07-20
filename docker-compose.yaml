@@ -32,12 +32,14 @@ services:
     restart: on-failure
     environment:
       DOCKER_HOST: "tcp://docker:2375"
-      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false" # Disable setup wizard  
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc-configs/jenkins.yaml  # Path to Configuration-as-Code configurations
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"               # Disable setup wizard  
     ports:
       - 8080:8080   # Port to expose Jenkins UI
       - 50000:5000  # Port for commnunicating with Jenkins agent
     volumes:
       - jenkins-data:/var/jenkins_home
+      - ./jenkins/casc-configs/jenkins.yaml:/var/jenkins_home/casc-configs/jenkins.yaml
     networks:
       - common
     
