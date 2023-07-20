@@ -6,6 +6,7 @@ services:
     privileged: true
     volumes:
       - jenkins-data:/var/jenkins_home
+      - ./docker/registry/daemon.json:/etc/docker/daemon.json
     command: [ "dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false" ]
     ports:
       - 2375:2375
