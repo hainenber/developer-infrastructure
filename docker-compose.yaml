@@ -15,13 +15,23 @@ services:
         aliases:
           - docker
   
+  docker-registry:
+    image: registry:2
+    restart: always
+    networks:
+      common:
+        aliases:
+          - docker-registry
+    ports:
+      - 5000:5000
+
   jenkins-server:
     build:
       context: ./jenkins
       dockerfile: jenkins.server.Dockerfile
     restart: on-failure
     environment:
-      DOCKER_HOST: "tcp://docker:2376"
+      DOCKER_HOST: "tcp://docker:2375"
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false" # Disable setup wizard  
     ports:
       - 8080:8080   # Port to expose Jenkins UI
