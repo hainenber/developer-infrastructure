@@ -4,7 +4,7 @@ services:
   jenkins-server:
     build:
       context: ./jenkins
-      dockerfile: jenkins.Dockerfile
+      dockerfile: jenkins.server.Dockerfile
     restart: on-failure
     environment:
       DOCKER_HOST: "tcp://docker:2376"
