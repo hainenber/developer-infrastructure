@@ -4,9 +4,6 @@ services:
   docker-dind:
     image: docker:dind
     privileged: true
-    volumes:
-      - jenkins-data:/var/jenkins_home
-      - ./docker/registry/daemon.json:/etc/docker/daemon.json
     command: [ "dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false" ]
     ports:
       - 2375:2375
@@ -14,16 +11,21 @@ services:
       common:
         aliases:
           - docker
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - ./docker/registry/daemon.json:/etc/docker/daemon.json
   
   docker-registry:
     image: registry:2
     restart: always
+    ports:
+      - 5000:5000
     networks:
       common:
         aliases:
           - docker-registry
-    ports:
-      - 5000:5000
+    volumes:
+      - docker-registry:/var/lib/registry
 
   jenkins-server:
     build:
@@ -48,4 +50,5 @@ networks:
 
 volumes:
   jenkins-data:
+  docker-registry:
   
