@@ -20,3 +20,26 @@ jenkins:
             name: "jenkins-agent-for-golang"
             pullStrategy: PULL_ALWAYS
             pullTimeout: 300
+
+jobs:
+  - script: |
+      pipelineJob('test') {
+        definition {
+          cps {
+            script("""
+            pipeline {
+              agent {
+                label 'docker'
+              }
+              stages {
+                stage('Hello World') {
+                  steps {
+                    echo 'Hello World!'
+                  }
+                }
+              }
+            }
+            """)
+          }
+        }
+      }
