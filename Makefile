@@ -4,7 +4,7 @@ build-agent:
 	docker push localhost:5000/jenkins-agent-for-golang 
 
 run: 
-	docker-compose --file ./docker-compose.yaml up --detach --remove-orphans
+	docker-compose --file ./docker-compose.yaml up --detach --remove-orphans --build
 
 stop:
 	docker-compose --file ./docker-compose.yaml down -v
