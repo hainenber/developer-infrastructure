@@ -1,0 +1,23 @@
+pipeline {
+    agent {
+        label 'docker'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/hainenber/hetman.git', branch: 'main', credentialsId: 'hainenber_personal_access_token'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mkdir bin && go build -o bin ./...'
+                archiveArtifacts artifacts: 'bin/*', fingerprint: true
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'go test -timeout 2m -cover ./...'
+            }
+        }
+    }
+}
