@@ -44,6 +44,8 @@ services:
       - ./jenkins/casc-configs/jenkins.yaml:/var/jenkins_home/casc-configs/jenkins.yaml
     networks:
       - common
+    secrets:
+      - jcasc-secrets
     
 networks:
   common:
@@ -51,4 +53,8 @@ networks:
 volumes:
   jenkins-data:
   docker-registry:
+  
+secrets:
+  jcasc-secrets:
+    file: ./jenkins/.secrets
   
