@@ -21,6 +21,18 @@ jenkins:
             pullStrategy: PULL_ALWAYS
             pullTimeout: 300
 
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+        - usernamePassword:         
+            description: "GitHub's PAT, allow Jenkins to access personal private repositories"
+            id: "hainenber_personal_access_token"
+            scope: GLOBAL
+            username: "hainenber"
+            password: ${readFile:/run/secrets/jcasc-secrets}
+            usernameSecret: true
+
 jobs:
   - script: |
       pipelineJob('test') {
