@@ -20,6 +20,7 @@ jenkins:
             name: "jenkins-agent-for-golang"
             pullStrategy: PULL_ALWAYS
             pullTimeout: 300
+  numExecutors: 0
 
 credentials:
   system:
