@@ -11,11 +11,14 @@ jenkins:
             uri: "tcp://docker:2375"
           readTimeout: 60 
         name: "docker"
-        exposeDockerHost: true
+        exposeDockerHost: false
         templates:
           - connector: "attach"
             dockerTemplateBase:
               image: "docker-registry:5000/jenkins-agent-for-golang"
+              mounts:
+                - "type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock"
+              mountsString: "type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock"
             labelString: "docker"
             name: "jenkins-agent-for-golang"
             pullStrategy: PULL_ALWAYS
