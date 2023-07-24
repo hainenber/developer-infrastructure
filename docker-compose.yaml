@@ -4,7 +4,7 @@ services:
   docker-dind:
     image: docker:dind
     privileged: true
-    command: [ "dockerd", "-H", "tcp://0.0.0.0:2375", "--tls=false" ]
+    command: [ "dockerd", "-H", "tcp://0.0.0.0:2375", "-H", "unix:///var/run/docker.sock", "--tls=false" ]
     ports:
       - 2375:2375
     networks:
