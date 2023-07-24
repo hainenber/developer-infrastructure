@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -33,62 +34,53 @@ func main() {
 	}
 
 	// Get Jenkinsfiles in ../jenkins/jobs directory
-	jenkinsJobRootPath := filepath.Join(wd, "../jenkins/jobs")
-	jenkinsJobs, err := os.ReadDir(jenkinsJobRootPath)
-	if err != nil {
-		panic(err)
-	}
-
-	jcascJobConfigTemplate := template.New("jcasc-config")
-	jcascJobConfigTemplate = template.Must(jcascJobConfigTemplate.Parse(jcascJobConfigTemplateString))
-
-	// Build Jenkinfile's content as JCasC's "jobs" pipeline
+	// Populate their content as JCasC's "jobs" pipeline into template ../jenkins/casc-configs/jenkins.yaml.scaffold
 	var (
-		jenkinsJobList []map[string]interface{}
+		jenkinsJobList         []map[string]interface{}
+		jenkinsJobRootPath     = filepath.Join(wd, "../jenkins/jobs")
+		jcascJobConfigTemplate = template.Must(template.New("jcasc-config").Parse(jcascJobConfigTemplateString))
+		jcascDirPath           = filepath.Join(wd, "../jenkins/casc-configs")
+		generatedJcascConfig   = make(map[interface{}]interface{})
 	)
-	for _, jenkinsJob := range jenkinsJobs {
-		jenkinsJobPath := jenkinsJob.Name()
-		jenkinsJobFiles, err := os.ReadDir(filepath.Join(jenkinsJobRootPath, jenkinsJobPath))
-		if err != nil {
-			panic(err)
-		}
-		for _, file := range jenkinsJobFiles {
-			if file.Name() == "Jenkinsfile" {
-				jenkinsFileContent, err := os.ReadFile(filepath.Join(jenkinsJobRootPath, jenkinsJobPath, "Jenkinsfile"))
-				if err != nil {
-					panic(err)
-				}
-				var buf bytes.Buffer
-				if err := jcascJobConfigTemplate.Execute(&buf, JcascJobConfig{
-					Name:   jenkinsJobPath,
-					Script: string(jenkinsFileContent),
-				}); err != nil {
-					panic(err)
-				}
-				jenkinsJobList = append(jenkinsJobList, map[string]interface{}{
-					"script": buf.String(),
-				})
+	// Visit child directory and extract Jenkinsfile's content for each defined job
+	if err := filepath.WalkDir(jenkinsJobRootPath, func(path string, file fs.DirEntry, err error) error {
+		if !file.IsDir() && file.Name() == "Jenkinsfile" {
+			jenkinsFileContent, err := os.ReadFile(path)
+			if err != nil {
+				return err
 			}
+			var buf bytes.Buffer
+			if err := jcascJobConfigTemplate.Execute(&buf, JcascJobConfig{
+				Name:   filepath.Base(filepath.Dir(path)),
+				Script: string(jenkinsFileContent),
+			}); err != nil {
+				return err
+			}
+			jenkinsJobList = append(jenkinsJobList, map[string]interface{}{
+				"script": buf.String(),
+			})
 		}
-	}
-
-	// Read the ../jenkins.yaml.scaffold as YAML format
-	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(wd, "../jenkins/casc-configs/jenkins.yaml.scaffold"))
-	if err != nil {
+		return nil
+	}); err != nil {
 		panic(err)
 	}
 
-	generatedJcascConfig := make(map[interface{}]interface{})
+	// Read the ../jenkins.yaml.scaffold in YAML format
+	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(jcascDirPath, "jenkins.yaml.scaffold"))
+	if err != nil {
+		panic(err)
+	}
 	if err = yaml.Unmarshal(scaffoldJcascConfig, &generatedJcascConfig); err != nil {
 		panic(err)
 	}
 
-	generatedJcascConfig["jobs"] = jenkinsJobList
-
 	// Generate ../jenkins/casc-configs/jenkins.yaml from skeleton file ../jenkins/casc-configs/jenkins.yaml.scaffold
+	generatedJcascConfig["jobs"] = jenkinsJobList
 	marshalledGeneratedJcascConfig, err := yaml.Marshal(generatedJcascConfig)
 	if err != nil {
 		panic(err)
 	}
-	os.WriteFile(filepath.Join(wd, "../jenkins/casc-configs/jenkins.yaml"), marshalledGeneratedJcascConfig, 0644)
+	if err := os.WriteFile(filepath.Join(jcascDirPath, "jenkins.yaml"), marshalledGeneratedJcascConfig, 0644); err != nil {
+		panic(err)
+	}
 }
