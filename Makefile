@@ -7,11 +7,11 @@ build-jcasc-config:
 	cd ./scripts && go run ./...
 
 start: build-jcasc-config
-	docker-compose --file ./docker-compose.yaml up --detach --remove-orphans --build
+	docker-compose --file ./deploy/docker-compose/docker-compose.yaml up --detach --remove-orphans --build
 	$(MAKE) build-and-push-agent
 
 stop:
-	docker-compose --file ./docker-compose.yaml down -v
+	docker-compose --file ./deploy/docker-compose/docker-compose.yaml down -v
 
 restart:
 	$(MAKE) stop && $(MAKE) start

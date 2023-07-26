@@ -13,7 +13,7 @@ services:
           - docker
     volumes:
       - jenkins-data:/var/jenkins_home
-      - ./docker/registry/daemon.json:/etc/docker/daemon.json
+      - ../../docker/registry/daemon.json:/etc/docker/daemon.json
   
   docker-registry:
     image: registry:2
@@ -29,7 +29,7 @@ services:
 
   jenkins-server:
     build:
-      context: ./jenkins
+      context: ../../jenkins
       dockerfile: jenkins.server.Dockerfile
     restart: on-failure
     environment:
@@ -41,7 +41,7 @@ services:
       - 50000:5000  # Port for commnunicating with Jenkins agent
     volumes:
       - jenkins-data:/var/jenkins_home
-      - ./jenkins/casc-configs/jenkins.yaml:/var/jenkins_home/casc-configs/jenkins.yaml
+      - ../../jenkins/casc-configs/jenkins.yaml:/var/jenkins_home/casc-configs/jenkins.yaml
     networks:
       - common
     secrets:
@@ -56,5 +56,5 @@ volumes:
   
 secrets:
   jcasc-secrets:
-    file: ./jenkins/.secrets
+    file: ../../jenkins/.secrets
   
