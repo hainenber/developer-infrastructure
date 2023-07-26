@@ -1,30 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"text/template"
+	"strings"
 
 	"gopkg.in/yaml.v3"
-)
-
-type JcascJobConfig struct {
-	Name   string
-	Script string
-}
-
-var (
-	jcascJobConfigTemplateString = `pipelineJob('{{.Name}}') {
-	definition {
-		cps {
-			script("""
-			{{.Script}}
-		""".stripIndent())
-		}
-	}
-}`
 )
 
 func main() {
@@ -36,28 +18,20 @@ func main() {
 	// Get Jenkinsfiles in ../jenkins/jobs directory
 	// Populate their content as JCasC's "jobs" pipeline into template ../jenkins/casc-configs/jenkins.yaml.scaffold
 	var (
-		jenkinsJobList         []map[string]interface{}
-		jenkinsJobRootPath     = filepath.Join(wd, "../jenkins/jobs")
-		jcascJobConfigTemplate = template.Must(template.New("jcasc-config").Parse(jcascJobConfigTemplateString))
-		jcascDirPath           = filepath.Join(wd, "../jenkins/casc-configs")
-		generatedJcascConfig   = make(map[interface{}]interface{})
+		jenkinsJobList       []map[string]interface{}
+		jenkinsJobRootPath   = filepath.Join(wd, "../jenkins/jobs")
+		jcascDirPath         = filepath.Join(wd, "../jenkins/casc-configs")
+		generatedJcascConfig = make(map[interface{}]interface{})
 	)
 	// Visit child directory and extract Jenkinsfile's content for each defined job
 	if err := filepath.WalkDir(jenkinsJobRootPath, func(path string, file fs.DirEntry, err error) error {
-		if !file.IsDir() && file.Name() == "Jenkinsfile" {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), "Jenkinsfile") {
 			jenkinsFileContent, err := os.ReadFile(path)
 			if err != nil {
 				return err
 			}
-			var buf bytes.Buffer
-			if err := jcascJobConfigTemplate.Execute(&buf, JcascJobConfig{
-				Name:   filepath.Base(filepath.Dir(path)),
-				Script: string(jenkinsFileContent),
-			}); err != nil {
-				return err
-			}
 			jenkinsJobList = append(jenkinsJobList, map[string]interface{}{
-				"script": buf.String(),
+				"script": string(jenkinsFileContent),
 			})
 		}
 		return nil
