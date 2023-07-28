@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.415-jdk17
+FROM jenkins/jenkins:jdk17
 
 # Use root to install prerequisites
 USER root
