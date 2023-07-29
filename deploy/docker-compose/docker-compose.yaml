@@ -24,9 +24,6 @@ services:
       common:
         aliases:
           - athens
-    environment: 
-      ATHENS_DISK_STORAGE_ROOT: /var/lib/athens
-      ATHENS_STORAGE_TYPE: disk
   
   docker-registry:
     image: registry:2
