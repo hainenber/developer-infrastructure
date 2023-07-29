@@ -1,3 +1,4 @@
 {
-    "insecure-registries" : [ "http://docker-registry:5000" ]
+    "insecure-registries" : [ "http://docker-registry:5000" ],
+    "registry-mirrors": [ "http://docker-registry:5000" ]
 }
