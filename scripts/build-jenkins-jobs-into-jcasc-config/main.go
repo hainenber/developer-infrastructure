@@ -16,11 +16,11 @@ func main() {
 	}
 
 	// Get Jenkinsfiles in ../jenkins/jobs directory
-	// Populate their content as JCasC's "jobs" pipeline into template ../jenkins/casc-configs/jenkins.yaml.scaffold
+	// Populate their content as JCasC's "jobs" pipeline into template ../../jenkins/casc-configs/jenkins.yaml.scaffold
 	var (
 		jenkinsJobList       []map[string]interface{}
-		jenkinsJobRootPath   = filepath.Join(wd, "../jenkins/jobs")
-		jcascDirPath         = filepath.Join(wd, "../jenkins/casc-configs")
+		jenkinsJobRootPath   = filepath.Join(wd, "../../jenkins/jobs")
+		jcascDirPath         = filepath.Join(wd, "../../jenkins/casc-configs")
 		generatedJcascConfig = make(map[interface{}]interface{})
 	)
 	// Visit child directory and extract Jenkinsfile's content for each defined job
@@ -40,7 +40,7 @@ func main() {
 	}
 
 	// Read the ../jenkins.yaml.scaffold in YAML format
-	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(jcascDirPath, "jenkins.yaml.scaffold"))
+	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(jcascDirPath, "jenkins.yaml"))
 	if err != nil {
 		panic(err)
 	}
