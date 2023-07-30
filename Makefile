@@ -4,14 +4,19 @@ build-and-push-agent:
 	docker push localhost:5000/jenkins-agent-for-golang 
 
 build-jcasc-config:
-	cd ./scripts && go run ./...
+	cd ./scripts/build-jenkins-jobs-into-jcasc-config && go run ./...
 
-start: build-jcasc-config
+add-athens-host-as-jenkins-global-var:
+	cd ./scripts/add-athens-host-as-jenkins-global-var && go run ./...
+
+start: 
 	docker-compose --file ./deploy/docker-compose/docker-compose.yaml up --detach --remove-orphans --build
+	$(MAKE) add-athens-host-as-jenkins-global-var
+	$(MAKE) build-jcasc-config
 	$(MAKE) build-and-push-agent
 
 stop:
-	docker-compose --file ./deploy/docker-compose/docker-compose.yaml down -v
+	docker-compose --file ./deploy/docker-compose/docker-compose.yaml down -v --remove-orphans
 
 restart:
 	$(MAKE) stop && $(MAKE) start
