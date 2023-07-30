@@ -3,6 +3,7 @@ version: "3"
 services:
   docker-dind:
     image: docker:dind
+    container_name: docker-dind
     privileged: true
     command: [ "dockerd", "-H", "tcp://0.0.0.0:2375", "-H", "unix:///var/run/docker.sock", "--tls=false" ]
     ports:
@@ -16,7 +17,10 @@ services:
       - ../../docker/registry/daemon.json:/etc/docker/daemon.json
   
   athens:
-    image: gomods/athens:canary
+    build:
+      context: https://github.com/gomods/athens.git#main
+      dockerfile: cmd/proxy/Dockerfile
+    container_name: athens
     restart: always
     ports:
       - 3000:3000
@@ -27,6 +31,7 @@ services:
   
   docker-registry:
     image: registry:2
+    container_name: docker-registry
     restart: always
     ports:
       - 5000:5000
@@ -41,6 +46,7 @@ services:
     build:
       context: ../../jenkins
       dockerfile: jenkins.server.Dockerfile
+    container_name: jenkins-server
     restart: on-failure
     environment:
       DOCKER_HOST: "tcp://docker:2375"
