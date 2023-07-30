@@ -1,5 +1,10 @@
 jenkins:
   systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n"
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: GOPROXY
+            value: "{{ .GoProxyHost }}"
   agentProtocols:
     - "JNLP4-connect"
     - "Ping"
