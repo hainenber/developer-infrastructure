@@ -24,7 +24,7 @@ pipelineJob('hetman-ci') {
                     sh 'go test -timeout 2m -cover ./...'
 
                     // Build and validate image
-                    def hetmanImage = docker.build('hetman')
+                    def hetmanImage = docker.build('hetman', '--build-arg GOPROXY .')
 
                     // Make the output directory.
                     sh "mkdir -p output"
