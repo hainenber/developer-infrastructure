@@ -54,7 +54,7 @@ services:
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"               # Disable setup wizard  
     ports:
       - 8080:8080   # Port to expose Jenkins UI
-      - 50000:5000  # Port for commnunicating with Jenkins agent
+      - 50000:5000  # Port for communicating with Jenkins agent
     volumes:
       - jenkins-data:/var/jenkins_home
       - ../../jenkins/casc-configs/jenkins.yaml:/var/jenkins_home/casc-configs/jenkins.yaml
