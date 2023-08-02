@@ -1,4 +1,4 @@
-module github.com/hainenber/developer-infrastructure
+module github.com/hainenber/developer-infrastructure-as-code
 
 go 1.20
 
