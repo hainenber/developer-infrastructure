@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: developer-infrastructure-as-code
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-server
+  template:
+    metadata:
+      labels:
+        app: jenkins-server
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      serviceAccountName: jenkins-admin
+      containers:
+        - name: jenkins-server
+          image: jenkins-server
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
+            requests:
+              memory: "500Mi"
+              cpu: "100m"
+          env:
+            # Path to Configuration-as-Code configurations
+            - name: CASC_JENKINS_CONFIG
+              value: /var/jenkins_home/casc-configs/jenkins.yaml
+            # Disable setup wizard
+            - name: JAVA_OPTS           
+              value: "-Djenkins.install.runSetupWizard=false"
+          ports:
+            - name: httpport 
+              containerPort: 8080
+            - name: jnlpport  
+              containerPort: 50000
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+            - name: jcasc
+              mountPath: /var/jenkins_home/casc-configs/jenkins.yaml
+      volumes:
+        - name: jenkins-home
+          emptyDir: {}
+        - name: jcasc  
+          hostPath:
+            path: /tmp/casc-configs
+            type: DirectoryOrCreate
