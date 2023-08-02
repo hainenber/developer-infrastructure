@@ -17,3 +17,4 @@ timestamper:latest
 workflow-aggregator:latest
 ws-cleanup:latest
 job-dsl:latest
+kubernetes:latest
