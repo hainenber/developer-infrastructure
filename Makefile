@@ -9,6 +9,18 @@ build-jcasc-config:
 add-athens-host-as-jenkins-global-var:
 	cd ./scripts/add-athens-host-as-jenkins-global-var && go run ./...
 
+start-k8s: build-jcasc-config
+	docker build --file ./jenkins/jenkins.server.Dockerfile --tag jenkins-server ./jenkins
+	cp ./jenkins/casc-configs/jcasc.yaml ./deploy/kubernetes/jcasc.yaml
+	cp ./jenkins/.secrets ./deploy/kubernetes/.secrets
+	kubectl apply -f ./deploy/kubernetes/namespace.yml
+	kubectl apply -k ./deploy/kubernetes/
+	kubectl apply -f ./deploy/kubernetes/jenkins/
+
+stop-k8s:
+	kubectl delete -k ./deploy/kubernetes/ || true
+	kubectl delete -f ./deploy/kubernetes/jenkins/ || true
+
 start: 
 	docker-compose --file ./deploy/docker-compose/docker-compose.yaml up --detach --remove-orphans --build
 	$(MAKE) add-athens-host-as-jenkins-global-var
@@ -20,3 +32,6 @@ stop:
 
 restart:
 	$(MAKE) stop && $(MAKE) start
+
+restart-k8s:
+	$(MAKE) stop-k8s && $(MAKE) start-k8s
