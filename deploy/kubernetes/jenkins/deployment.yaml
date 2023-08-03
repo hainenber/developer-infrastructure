@@ -31,7 +31,7 @@ spec:
           env:
             # Path to Configuration-as-Code configurations
             - name: CASC_JENKINS_CONFIG
-              value: /var/jenkins_home/casc-configs/jenkins.yaml
+              value: /var/jenkins_home/casc-configs/jcasc.yaml
             # Disable setup wizard
             - name: JAVA_OPTS           
               value: "-Djenkins.install.runSetupWizard=false"
@@ -44,11 +44,17 @@ spec:
             - name: jenkins-home
               mountPath: /var/jenkins_home
             - name: jcasc
-              mountPath: /var/jenkins_home/casc-configs/jenkins.yaml
+              mountPath: /var/jenkins_home/casc-configs/jcasc.yaml
+              subPath: jcasc.yaml
+            - name: jcasc-secrets-volume
+              mountPath: /var/jenkins_home/jcasc-secrets
+              readOnly: true
       volumes:
         - name: jenkins-home
           emptyDir: {}
         - name: jcasc  
-          hostPath:
-            path: /tmp/casc-configs
-            type: DirectoryOrCreate
+          configMap:
+            name: jcasc
+        - name: jcasc-secrets-volume
+          secret:
+            secretName: jcasc-secrets
