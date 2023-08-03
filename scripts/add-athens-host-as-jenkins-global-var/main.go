@@ -27,7 +27,7 @@ func main() {
 		athensPrivateIpAddress string
 	)
 
-	jcascTemplateContent, err := os.ReadFile(filepath.Join(jcascDirPath, "jenkins.yaml.scaffold"))
+	jcascTemplateContent, err := os.ReadFile(filepath.Join(jcascDirPath, "jcasc.yaml.scaffold"))
 	if err != nil {
 		panic(err)
 	}
@@ -79,13 +79,13 @@ func main() {
 		GoProxyHost: fmt.Sprintf("http://%s:3000", athensPrivateIpAddress),
 	}
 
-	// Read the ../jenkins.yaml.scaffold in YAML format
-	generatedJcascConfigFile, err := os.Create(filepath.Join(jcascDirPath, "jenkins.yaml"))
+	// Read the ../jcasc.yaml.scaffold in YAML format
+	generatedJcascConfigFile, err := os.Create(filepath.Join(jcascDirPath, "jcasc.yaml"))
 	if err != nil {
 		panic(err)
 	}
 	defer generatedJcascConfigFile.Close()
 
-	// Generate ../jenkins/casc-configs/jenkins.yaml from skeleton file ../jenkins/casc-configs/jenkins.yaml.scaffold
+	// Generate ../jenkins/casc-configs/jcasc.yaml from skeleton file ../jenkins/casc-configs/jcasc.yaml.scaffold
 	jcascTemplate.Execute(generatedJcascConfigFile, athensContainerData)
 }
