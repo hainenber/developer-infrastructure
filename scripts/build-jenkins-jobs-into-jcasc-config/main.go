@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	DEPLOY_MODE = "k8s"
 )
 
 func main() {
@@ -40,7 +45,7 @@ func main() {
 	}
 
 	// Read the ../jcasc.yaml.scaffold in YAML format
-	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(jcascDirPath, "jcasc.yaml.scaffold"))
+	scaffoldJcascConfig, err := os.ReadFile(filepath.Join(jcascDirPath, fmt.Sprintf("jcasc.%s.yaml.scaffold", DEPLOY_MODE)))
 	if err != nil {
 		panic(err)
 	}

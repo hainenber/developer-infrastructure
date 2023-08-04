@@ -20,7 +20,7 @@ jenkins:
         templates:
           - connector: "attach"
             dockerTemplateBase:
-              image: "docker-registry:5000/jenkins-agent-for-golang"
+              image: "docker-registry:32001/jenkins-agent-for-golang"
               mounts:
                 - "type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock"
               mountsString: "type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock"

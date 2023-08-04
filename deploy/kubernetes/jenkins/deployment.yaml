@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jenkins
+  name: jenkins-server
   namespace: developer-infrastructure-as-code
 spec:
   replicas: 1

@@ -34,7 +34,7 @@ services:
     container_name: docker-registry
     restart: always
     ports:
-      - 5000:5000
+      - 32001:5000
     networks:
       common:
         aliases:
@@ -53,8 +53,8 @@ services:
       CASC_JENKINS_CONFIG: /var/jenkins_home/casc-configs/jcasc.yaml  # Path to Configuration-as-Code configurations
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"               # Disable setup wizard  
     ports:
-      - 8080:8080   # Port to expose Jenkins UI
-      - 50000:5000  # Port for communicating with Jenkins agent
+      - 32000:8080   # Port to expose Jenkins UI
+      - 5000:5000  # Port for communicating with Jenkins agent
     volumes:
       - jenkins-data:/var/jenkins_home
       - ../../jenkins/casc-configs/jcasc.yaml:/var/jenkins_home/casc-configs/jcasc.yaml
